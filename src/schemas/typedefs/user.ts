@@ -25,7 +25,7 @@ export const userTypeDefs = `#graphql
   }
 
   type store {
-    id: ID
+    ID: ID
     name: String
     image: String
     background: String
@@ -71,7 +71,7 @@ export const userTypeDefs = `#graphql
   }
 
   type Query {
-    getUserData(access_token: String!): user
+    getUserData: user
   }
 
   type Mutation {

@@ -15,6 +15,6 @@ export const tourTypeDefs = `#graphql
   }
 
   type Query {
-    getUserAchievement(access_token: String!): [achievement]
+    getUserAchievement: [achievement]
   }
 `;

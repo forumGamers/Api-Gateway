@@ -9,6 +9,8 @@ const redis = new Redis({
   password: process.env.REDIS_PASS as string,
 });
 
-redis.on("error", (err: Error) => console.log(err));
+redis.on("error", (err: Error) => {
+  if (err) console.log(err);
+});
 
 export default redis;
