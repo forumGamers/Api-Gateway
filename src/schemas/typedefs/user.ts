@@ -25,7 +25,7 @@ export const userTypeDefs = `#graphql
   }
 
   type store {
-    id: ID
+    ID: ID
     name: String
     image: String
     background: String
