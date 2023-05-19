@@ -29,8 +29,6 @@ export default async function parseReq(
     }
 
     context.request.variables = decrypted;
-
-    return;
   } catch (err) {
     errorHandling(err);
   }

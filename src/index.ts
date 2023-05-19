@@ -14,7 +14,7 @@ import {
 } from "@apollo/server/standalone";
 import schema from "./schemas";
 import { GlobalContext } from "./interfaces";
-import parseReq from "./middlewares/didResolveOperation";
+import parseReq from "./middlewares/parseReq";
 const port = parseInt(process.env.PORT as string) || 5000;
 
 const server = new ApolloServer<BaseContext>({
