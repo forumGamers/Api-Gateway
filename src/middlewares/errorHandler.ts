@@ -1,9 +1,11 @@
 import { GraphQLError } from "graphql";
 
-export default function errorHandling(err: any) {
-  throw new GraphQLError(err?.response?.data?.message, {
+export default function errorHandling(
+  err: { message: string; statusCode: number; code?: string } | Error | any
+) {
+  throw new GraphQLError(err?.response?.data?.message || err.message || err, {
     extensions: {
-      code: err?.response?.status,
+      code: err?.code || err?.response?.status,
     },
   }).message;
 }

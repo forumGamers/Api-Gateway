@@ -2,21 +2,44 @@ import { config } from "dotenv";
 
 config();
 
-import { ApolloServer } from "@apollo/server";
+import {
+  ApolloServer,
+  BaseContext,
+  GraphQLRequestListener,
+  GraphQLRequestContext,
+} from "@apollo/server";
 import {
   startStandaloneServer,
   StandaloneServerContextFunctionArgument,
 } from "@apollo/server/standalone";
 import schema from "./schemas";
-const port = process.env.PORT || (5000 as number);
+import { GlobalContext } from "./interfaces";
+import parseReq from "./middlewares/didResolveOperation";
+const port = parseInt(process.env.PORT as string) || 5000;
 
-const server = new ApolloServer({
+const server = new ApolloServer<BaseContext>({
   introspection: true,
   schema,
+  plugins: [
+    {
+      async requestDidStart(
+        context: GraphQLRequestContext<GlobalContext>
+      ): Promise<GraphQLRequestListener<GlobalContext> | void> {
+        return {
+          async didResolveOperation(
+            requestContext: GraphQLRequestContext<GlobalContext>
+          ) {
+            await parseReq(requestContext);
+          },
+        };
+      },
+    },
+  ],
+  status400ForVariableCoercionErrors: true,
 });
 
 startStandaloneServer(server, {
-  listen: { port: port as number },
+  listen: { port },
   context: async ({ req, res }: StandaloneServerContextFunctionArgument) => {
     return {
       access_token: req.headers?.access_token,
