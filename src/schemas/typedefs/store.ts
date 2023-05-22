@@ -10,6 +10,9 @@ export const storeTypedefs = `#graphql
     active: Boolean
     Items: [item]
     StoreStatus: store_status
+    avg_rating: Int
+    rating_count: Int
+    followers: Int
   }
 
   type item {
