@@ -28,6 +28,7 @@
     "@types/winston": "^2.4.4",
     "axios": "^1.4.0",
     "crypto": "^1.0.1",
+    "crypto-ts": "^1.0.2",
     "dotenv": "^16.0.3",
     "graphql": "^16.6.0",
     "ioredis": "^5.3.2",

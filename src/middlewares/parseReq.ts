@@ -3,16 +3,36 @@ import { GlobalContext } from "../interfaces";
 import errorHandling from "./errorHandler";
 import { decrypt, validateChar } from "../utils/crypto";
 
+function getVariableName(
+  context: GraphQLRequestContext<GlobalContext>
+): string | null {
+  const definitions = context.document?.definitions[0] as any;
+
+  if (definitions?.kind === "OperationDefinition") {
+    const variableDefinition = definitions.variableDefinitions?.[0];
+    return variableDefinition?.variable?.name?.value;
+  }
+  return null;
+}
+
 export default async function parseReq(
   context: GraphQLRequestContext<GlobalContext>
 ): Promise<void> {
   try {
     const { variables } = context.request;
 
+    if (!variables) return;
+
+    const varName = getVariableName(context);
+
+    if (!varName) return;
+
+    if (!variables[varName]) return;
+
     const decrypted: any = {};
 
-    for (const key in variables) {
-      const value = variables[key];
+    for (const key in variables[varName]) {
+      const value = variables[varName][key];
 
       const decryptedData = decrypt(value);
 
@@ -28,7 +48,8 @@ export default async function parseReq(
       decrypted[key] = decryptedData;
     }
 
-    context.request.variables = decrypted;
+    if (context.request.variables)
+      context.request.variables[varName] = decrypted;
   } catch (err) {
     errorHandling(err);
   }
