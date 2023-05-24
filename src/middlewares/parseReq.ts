@@ -21,13 +21,9 @@ export default async function parseReq(
   try {
     const { variables } = context.request;
 
-    if (!variables) return;
-
     const varName = getVariableName(context);
 
-    if (!varName) return;
-
-    if (!variables[varName]) return;
+    if (!varName || !variables || !variables[varName]) return;
 
     const decrypted: any = {};
 

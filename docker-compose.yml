@@ -1,0 +1,26 @@
+version: '1'
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    depends_on:
+      - kafka
+      - redis
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_CREATE_TOPICS=store-topic:1:1,user-topic:1:1
+    volumes:
+    - /path/to/kafka-persistence:/bitnami/kafka
+
+  redis:
+    image: redis
+    ports:
+      - 11677:11677
