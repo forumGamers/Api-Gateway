@@ -13,6 +13,8 @@ export const storeTypedefs = `#graphql
     avg_rating: Int
     rating_count: Int
     followers: Int
+    CreatedAt: String
+    UpdatedAt: String
   }
 
   type item {
@@ -34,7 +36,13 @@ export const storeTypedefs = `#graphql
     name: String
   }
 
+  type storeId {
+    ID: ID
+  }
+
   type Query {
     getUserStore: store
+    getStoreByID(id: String!): store
+    getAllStoreId: [storeId]
   }
 `;

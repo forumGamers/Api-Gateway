@@ -19,11 +19,18 @@ export default async function parseReq(
   context: GraphQLRequestContext<GlobalContext>
 ): Promise<void> {
   try {
+    if (!context.request.variables) return;
+
     const { variables } = context.request;
 
     const varName = getVariableName(context);
 
     if (!varName || !variables || !variables[varName]) return;
+
+    if (typeof variables[varName] === "string") {
+      context.request.variables[varName] = decrypt(variables[varName]);
+      return;
+    }
 
     const decrypted: any = {};
 
@@ -44,8 +51,7 @@ export default async function parseReq(
       decrypted[key] = decryptedData;
     }
 
-    if (context.request.variables)
-      context.request.variables[varName] = decrypted;
+    context.request.variables[varName] = decrypted;
   } catch (err) {
     errorHandling(err);
   }

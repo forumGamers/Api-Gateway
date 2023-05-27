@@ -44,5 +44,53 @@ export const storeResolver = {
         errorHandling(err);
       }
     },
+    getStoreByID: async (_: never, args: { id: string }) => {
+      try {
+        const { id } = args;
+
+        const cache = await redis.get(`store:${id}`);
+
+        if (cache) return JSON.parse(cache);
+
+        const { data } = await axios({
+          method: "GET",
+          url: `${storeUrl}/store/${id}`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        const { data: follower } = await axios({
+          method: "GET",
+          url: `${userUrl}/following-store/count/${data.ID}`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+        const { count } = follower;
+
+        data.followers = count;
+
+        await redis.set(`store:${id}`, JSON.stringify(data));
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getAllStoreId: async () => {
+      try {
+        const { data } = await axios({
+          method: "GET",
+          url: `${storeUrl}/store/store-id`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };
