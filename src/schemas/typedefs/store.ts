@@ -40,9 +40,20 @@ export const storeTypedefs = `#graphql
     ID: ID
   }
 
+  type itemSlug {
+    Slug: String
+  }
+
+  type allSlug {
+    ID: ID
+    Slug: String
+  }
+
   type Query {
     getUserStore: store
     getStoreByID(id: String!): store
     getAllStoreId: [storeId]
+    getAllSlugByStoreId(id: String!): [itemSlug]
+    getAllSlug: [allSlug]
   }
 `;

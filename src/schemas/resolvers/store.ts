@@ -92,5 +92,36 @@ export const storeResolver = {
         errorHandling(err);
       }
     },
+    getAllSlugByStoreId: async (_: never, args: { id: string }) => {
+      try {
+        const { id } = args;
+
+        const { data } = await axios({
+          method: "GET",
+          url: `${storeUrl}/item/list-slug/${id}`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getAllSlug: async () => {
+      try {
+        const { data } = await axios({
+          method: "GET",
+          url: `${storeUrl}/item/list-slug`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };
