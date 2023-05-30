@@ -55,5 +55,6 @@ export const storeTypedefs = `#graphql
     getAllStoreId: [storeId]
     getAllSlugByStoreId(id: String!): [itemSlug]
     getAllSlug: [allSlug]
+    getItemBySlug(slug: String!): item
   }
 `;

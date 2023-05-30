@@ -123,5 +123,28 @@ export const storeResolver = {
         errorHandling(err);
       }
     },
+    getItemBySlug: async (_: never, args: { slug: string }) => {
+      try {
+        const { slug } = args;
+
+        const cache = await redis.get(`item:${slug}`);
+
+        if (cache) return JSON.parse(cache);
+
+        const { data } = await axios({
+          method: "GET",
+          url: `${storeUrl}/item/${slug}`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        await redis.set(`item:${slug}`, JSON.stringify(data));
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };
