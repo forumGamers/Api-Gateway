@@ -45,7 +45,7 @@ export default async function parseReq(
       )
         throw {
           statusCode: 400,
-          message: `${key} is not allowed contains symbol`,
+          message: `${key} is not allowed contains symbol ${decryptedData}`,
         };
 
       decrypted[key] = decryptedData;

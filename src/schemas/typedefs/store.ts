@@ -49,6 +49,18 @@ export const storeTypedefs = `#graphql
     Slug: String
   }
 
+  input queryStore {
+    name: String
+    minDate: String
+    maxDate: String
+    owner: String
+    active: String
+    minExp: String
+    maxExp: String
+    page: String
+    limit: String
+  }
+
   type Query {
     getUserStore: store
     getStoreByID(id: String!): store
@@ -56,5 +68,6 @@ export const storeTypedefs = `#graphql
     getAllSlugByStoreId(id: String!): [itemSlug]
     getAllSlug: [allSlug]
     getItemBySlug(slug: String!): item
+    getAllStore(query: queryStore): [store]
   }
 `;

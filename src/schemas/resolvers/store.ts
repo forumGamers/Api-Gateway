@@ -4,6 +4,7 @@ import axios from "axios";
 import { storeUrl, userUrl } from "../../constants";
 import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
+import { urlBuilder } from "../../utils/global";
 
 export const storeResolver = {
   Query: {
@@ -140,6 +141,38 @@ export const storeResolver = {
         });
 
         await redis.set(`item:${slug}`, JSON.stringify(data));
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getAllStore: async (
+      _: never,
+      args: {
+        query: {
+          name: string;
+          minDate: string;
+          maxDate: string;
+          owner: string;
+          active: string;
+          minExp: string;
+          maxExp: string;
+          page: string;
+          limit: string;
+        };
+      }
+    ) => {
+      try {
+        const url = urlBuilder(`${storeUrl}/store`, args.query);
+
+        const { data } = await axios({
+          method: "GET",
+          url,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
 
         return data;
       } catch (err) {
