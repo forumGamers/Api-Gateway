@@ -134,5 +134,61 @@ export const userResolver = {
         errorHandling(err);
       }
     },
+    resetPassword: async (_: never, args: { email: string }) => {
+      try {
+        const { email } = args;
+
+        const { data: token } = await axios({
+          method: "POST",
+          url: `${userUrl}/auth/reset-password`,
+          data: {
+            email,
+          },
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        await axios({
+          method: "GET",
+          url: `${eventUrl}/user/reset-password`,
+          headers: {
+            Origin: process.env.ORIGIN,
+            access_token: token,
+          },
+        });
+
+        return { message: "success" };
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    changeForgetPassword: async (
+      _: never,
+      args: {
+        payload: {
+          password: string;
+          confirmPassword: string;
+        };
+      },
+      context: GlobalContext
+    ) => {
+      try {
+        const { payload } = args;
+
+        const { data } = await axios({
+          method: "PATCH",
+          url: `${userUrl}/auth/change-forget-pass`,
+          data: payload,
+          headers: {
+            access_token: context.access_token,
+          },
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };

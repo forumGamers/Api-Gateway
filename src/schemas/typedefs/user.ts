@@ -70,6 +70,11 @@ export const userTypeDefs = `#graphql
     password: String!
   }
 
+  input forgetPass {
+    password: String!
+    confirmPassword: String!
+  }
+
   type Query {
     getUserData: user
   }
@@ -78,5 +83,7 @@ export const userTypeDefs = `#graphql
     register(register: registerInput!): message!
     login(login: loginInput!): access_token!
     verifyUser(token: tokenVerification!): message
+    resetPassword(email: String!): message
+    changeForgetPassword(payload: forgetPass!): message
   }
 `;
