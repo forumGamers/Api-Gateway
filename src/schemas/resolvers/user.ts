@@ -86,9 +86,14 @@ export const userResolver = {
         errorHandling(err);
       }
     },
-    login: async (_: never, args: { login: loginInput }) => {
+    login: async (
+      _: never,
+      args: { login: loginInput },
+      context: GlobalContext
+    ) => {
       try {
         const { login } = args;
+        const { access_token: captchaToken } = context;
 
         const { data, status } = await axios({
           method: "POST",
@@ -96,6 +101,7 @@ export const userResolver = {
           data: login,
           headers: {
             Origin: process.env.ORIGIN,
+            access_token: captchaToken,
           },
         });
 
