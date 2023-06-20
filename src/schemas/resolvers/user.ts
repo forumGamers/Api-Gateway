@@ -95,13 +95,32 @@ export const userResolver = {
         const { login } = args;
         const { access_token: captchaToken } = context;
 
+        const { data: valid } = await axios.post<{
+          success: boolean;
+          challenge_ts: string;
+          hostname?: string;
+          apk_package_name?: string;
+          "error-codes"?: any[];
+        }>("https://www.google.com/recaptcha/api/siteverify", null, {
+          params: {
+            secret: process.env.CAPTCHA_SECRET_KEY,
+            response: captchaToken,
+          },
+        });
+
+        const { success, "error-codes": errorCode } = valid;
+
+        if (!success && errorCode)
+          throw {
+            message: errorCode[0],
+          };
+
         const { data, status } = await axios({
           method: "POST",
           url: `${userUrl}/auth/login`,
           data: login,
           headers: {
             Origin: process.env.ORIGIN,
-            access_token: captchaToken,
           },
         });
 
