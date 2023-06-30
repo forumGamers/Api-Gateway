@@ -85,5 +85,6 @@ export const userTypeDefs = `#graphql
     verifyUser(token: tokenVerification!): message
     resetPassword(email: String!): message
     changeForgetPassword(payload: forgetPass!): message
+    googleLogin: access_token!
   }
 `;

@@ -207,6 +207,25 @@ export const userResolver = {
           data: payload,
           headers: {
             access_token: context.access_token,
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    googleLogin: async (_: never, args: never, context: GlobalContext) => {
+      try {
+        const { access_token } = context;
+
+        const { data } = await axios<{ access_token: string }>({
+          method: "POST",
+          url: `${userUrl}/auth/google-login`,
+          headers: {
+            Origin: process.env.ORIGIN,
+            google_token: access_token,
           },
         });
 
