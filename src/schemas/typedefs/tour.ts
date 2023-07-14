@@ -1,6 +1,6 @@
 export const tourTypeDefs = `#graphql
   type game {
-    id: String
+    _id: String
     name: String
     type: String
     image: String
@@ -8,7 +8,7 @@ export const tourTypeDefs = `#graphql
   }
 
   type achievement {
-    id: ID
+    _id: ID
     name: String
     image: String
     Game: game
@@ -16,5 +16,6 @@ export const tourTypeDefs = `#graphql
 
   type Query {
     getUserAchievement: [achievement]
+    getGameList: [game]
   }
 `;

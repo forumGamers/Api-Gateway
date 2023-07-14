@@ -4,7 +4,6 @@ import axios from "axios";
 import { storeUrl, userUrl } from "../../constants";
 import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
-import { urlBuilder } from "../../utils/global";
 
 export const storeResolver = {
   Query: {
@@ -164,14 +163,15 @@ export const storeResolver = {
       }
     ) => {
       try {
-        const url = urlBuilder(`${storeUrl}/store`, args.query);
+        const { query } = args;
 
         const { data } = await axios({
           method: "GET",
-          url,
+          url: `${storeUrl}/store`,
           headers: {
             Origin: process.env.ORIGIN,
           },
+          params: query,
         });
 
         return data;

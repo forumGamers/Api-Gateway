@@ -2,6 +2,7 @@ import { tourUrl } from "../../constants";
 import errorHandling from "../../middlewares/errorHandler";
 import axios from "axios";
 import { GlobalContext } from "../../interfaces";
+import redis from "../../config/redis";
 
 export const tourResolver = {
   Query: {
@@ -38,6 +39,27 @@ export const tourResolver = {
         });
 
         return resp;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getGameList: async () => {
+      try {
+        const cache = await redis.get("game:all");
+
+        if (cache) return JSON.parse(cache);
+
+        const { data } = await axios({
+          method: "GET",
+          url: `${tourUrl}/game`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        await redis.set("game:all", JSON.stringify(data));
+
+        return data;
       } catch (err) {
         errorHandling(err);
       }
