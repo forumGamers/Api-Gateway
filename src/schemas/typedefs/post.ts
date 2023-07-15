@@ -11,6 +11,14 @@ export const postTypeDefs = `#graphql
     CountLike: Int
     CountComment: Int
     CountShare: Int
+    User: userTimeLine
+  }
+
+  type userTimeLine {
+    id: ID
+    imageUrl: String
+    UUID: ID
+    username: String
   }
 
   type Query {
