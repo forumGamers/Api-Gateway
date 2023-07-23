@@ -3,8 +3,7 @@ export const postTypeDefs = `#graphql
     _id: ID
     userId: Int
     text: String
-    imageUrl: String
-    imageId: String
+    Media: media
     allowComment: Boolean
     CreatedAt: String
     UpdatedAt: String
@@ -12,6 +11,12 @@ export const postTypeDefs = `#graphql
     CountComment: Int
     CountShare: Int
     User: userTimeLine
+  }
+
+  type media {
+    url: String
+    id: String
+    type: String
   }
 
   type userTimeLine {

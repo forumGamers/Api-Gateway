@@ -32,6 +32,7 @@ export const postResolver = {
           ...timeline,
           User: users.find((user) => user.id === timeline.userId),
         }));
+        console.log({data})
 
         return data;
       } catch (err) {
