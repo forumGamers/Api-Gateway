@@ -11,12 +11,20 @@ export const postTypeDefs = `#graphql
     CountComment: Int
     CountShare: Int
     User: userTimeLine
+    isLiked: Boolean
+    isShared: Boolean
+    tags: [String]
+    privacy: String
   }
 
   type media {
     url: String
     id: String
     type: String
+  }
+
+  type message {
+    message: String!
   }
 
   type userTimeLine {
@@ -28,5 +36,10 @@ export const postTypeDefs = `#graphql
 
   type Query {
     getTimeLine: [timeLine]
+  }
+
+  type Mutation {
+    likeAPost(id: String!): message!
+    unLikeAPost(id: String!): message!
   }
 `;

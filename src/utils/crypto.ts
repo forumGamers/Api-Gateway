@@ -10,4 +10,4 @@ export const decrypt = (data: string): string => {
 };
 
 export const validateChar = (data: string): boolean =>
-  /[^a-zA-Z0-9.,_:\-\s@]/g.test(data) ? true : false;
+  /[^a-zA-Z0-9.,_:*#\-\s@]/g.test(data);

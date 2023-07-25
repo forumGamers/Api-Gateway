@@ -2,6 +2,7 @@ import axios from "axios";
 import errorHandling from "../../middlewares/errorHandler";
 import { postUrl, userUrl } from "../../constants";
 import { timeLine, user } from "../../interfaces/post";
+import { GlobalContext } from "../../interfaces";
 
 export const postResolver = {
   Query: {
@@ -32,7 +33,54 @@ export const postResolver = {
           ...timeline,
           User: users.find((user) => user.id === timeline.userId),
         }));
-        console.log({data})
+        console.log({ data });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+  },
+  Mutation: {
+    likeAPost: async (
+      _: never,
+      args: { id: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { access_token } = context;
+        console.log({ access_token, args });
+
+        const { data } = await axios({
+          method: "POST",
+          url: `${postUrl}/like/${args}`,
+          headers: {
+            access_token,
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    unLikeAPost: async (
+      _: never,
+      args: { id: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { access_token } = context;
+
+        const { data } = await axios({
+          method: "DELETE",
+          url: `${postUrl}/like/${args.id}`,
+          headers: {
+            access_token,
+            Origin: process.env.ORIGIN,
+          },
+        });
 
         return data;
       } catch (err) {
