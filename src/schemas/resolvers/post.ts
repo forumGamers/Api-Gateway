@@ -40,6 +40,23 @@ export const postResolver = {
         errorHandling(err);
       }
     },
+    getPostComment: async (_: never, args: { id: string }) => {
+      try {
+        const { id } = args;
+
+        const { data } = await axios({
+          method: "GET",
+          url: `${postUrl}/comment/${id}`,
+          headers: {
+            Origin: process.env.ORIGIN,
+          },
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
   Mutation: {
     likeAPost: async (

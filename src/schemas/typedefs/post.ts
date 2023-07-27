@@ -34,8 +34,28 @@ export const postTypeDefs = `#graphql
     username: String
   }
 
+  type reply {
+    _id: ID
+    userId: Int
+    text: String
+    commentId: String
+    CreatedAt: String
+    UpdatedAt: String
+  }
+
+  type comment {
+    _id: ID
+    userId: Int
+    text: String
+    postId: String
+    CreatedAt: String
+    UpdatedAt: String
+    Reply: [reply]
+  }
+
   type Query {
     getTimeLine: [timeLine]
+    getPostComment(id: String!): [comment]
   }
 
   type Mutation {
