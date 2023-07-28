@@ -7,7 +7,7 @@ export const userTypeDefs = `#graphql
     access_token: String!
   }
 
-  type following {
+  type followingStore {
     id: ID
     UserId: Int
     StoreId: Int
@@ -15,11 +15,10 @@ export const userTypeDefs = `#graphql
     updatedAt: String
   }
 
-  type topUp {
+  type followingUser {
     id: ID
-    amount: Int
     UserId: Int
-    status: String
+    FollowedUser: Int
     createdAt: String
     updatedAt: String
   }
@@ -48,8 +47,8 @@ export const userTypeDefs = `#graphql
     exp: Int
     createdAt: String
     updatedAt: String
-    Followings: [following]
-    TopUps: [topUp]
+    Followings: [followingStore]
+    UserFollowings: [followingUser]
     Store: store
   }
 
