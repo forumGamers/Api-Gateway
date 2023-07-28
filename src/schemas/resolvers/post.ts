@@ -1,39 +1,23 @@
-import axios from "axios";
 import errorHandling from "../../middlewares/errorHandler";
-import { postUrl, userUrl } from "../../constants";
-import { timeLine, user } from "../../interfaces/post";
+import { comment, timeLine, user } from "../../interfaces/post";
 import { GlobalContext } from "../../interfaces";
+import UserApi from "../../api/user";
+import PostApi from "../../api/post";
 
 export const postResolver = {
   Query: {
     getTimeLine: async () => {
       try {
-        const { data: timeLines } = await axios<timeLine[]>({
-          method: "GET",
-          url: `${postUrl}/post/public-content`,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
+        const timeLines = await PostApi.getPublicContent<timeLine[]>();
 
         const id = timeLines.map((el: timeLine) => el.userId).join(",");
 
-        const { data: users } = await axios<user[]>({
-          method: "GET",
-          url: `${userUrl}/users/multiple`,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-          params: {
-            id,
-          },
-        });
+        const users = await UserApi.getMultipleUserById<user[]>({ id });
 
         const data = timeLines.map((timeline: timeLine) => ({
           ...timeline,
           User: users.find((user) => user.id === timeline.userId),
         }));
-        console.log({ data });
 
         return data;
       } catch (err) {
@@ -44,13 +28,7 @@ export const postResolver = {
       try {
         const { id } = args;
 
-        const { data } = await axios({
-          method: "GET",
-          url: `${postUrl}/comment/${id}`,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
+        const data = await PostApi.getPostComment<comment[]>(id);
 
         return data;
       } catch (err) {
@@ -66,16 +44,9 @@ export const postResolver = {
     ) => {
       try {
         const { access_token } = context;
-        console.log({ access_token, args });
+        const { id } = args;
 
-        const { data } = await axios({
-          method: "POST",
-          url: `${postUrl}/like/${args}`,
-          headers: {
-            access_token,
-            Origin: process.env.ORIGIN,
-          },
-        });
+        const data = await PostApi.likeAPost({ access_token, id });
 
         return data;
       } catch (err) {
@@ -89,15 +60,9 @@ export const postResolver = {
     ) => {
       try {
         const { access_token } = context;
+        const { id } = args;
 
-        const { data } = await axios({
-          method: "DELETE",
-          url: `${postUrl}/like/${args.id}`,
-          headers: {
-            access_token,
-            Origin: process.env.ORIGIN,
-          },
-        });
+        const data = await PostApi.unlikeAPost({ access_token, id });
 
         return data;
       } catch (err) {

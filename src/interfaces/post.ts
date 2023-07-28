@@ -18,3 +18,22 @@ export interface user {
   imageUrl: string;
   username: string;
 }
+
+export interface comment {
+  _id: string;
+  userId: number;
+  text: string;
+  postId: string;
+  CreatedAt: Date;
+  UpdatedAt: Date;
+  Reply: reply;
+}
+
+export interface reply {
+  _id: string;
+  userId: number;
+  text: string;
+  CommentId: string;
+  CreatedAt: Date;
+  UpdatedAt: Date;
+}
