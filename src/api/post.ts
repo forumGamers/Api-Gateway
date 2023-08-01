@@ -30,13 +30,17 @@ class PostApi extends BaseRequest {
     access_token: string | undefined;
     id: string;
   }): Promise<{ message: string }> {
-    const { data } = await this.baseMutate<message>({
+    const { data, status } = await this.baseMutate<message>({
       url: `/like/${id}`,
       headers: {
         access_token,
       },
       method: "POST",
     });
+    if (status !== 201)
+      throw {
+        message: data.message,
+      };
 
     return data;
   }

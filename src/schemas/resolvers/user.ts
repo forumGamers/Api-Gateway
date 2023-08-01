@@ -9,6 +9,7 @@ import axios from "axios";
 import { userUrl, eventUrl, storeUrl } from "../../constants";
 import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
+import UserApi from "../../api/user";
 
 export const userResolver = {
   Query: {
@@ -94,6 +95,7 @@ export const userResolver = {
       try {
         const { login } = args;
         const { access_token: captchaToken } = context;
+        const { email, password } = login;
 
         const { data: valid } = await axios.post<{
           success: boolean;
@@ -115,25 +117,9 @@ export const userResolver = {
             message: errorCode[0],
           };
 
-        const { data, status } = await axios({
-          method: "POST",
-          url: `${userUrl}/auth/login`,
-          data: login,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
+        const data = await UserApi.loginHandler({ email, password });
 
-        if (status !== 200) throw { message: data?.message };
-
-        const { access_token, email, username, imageUrl } = data;
-
-        return {
-          access_token,
-          email,
-          username,
-          imageUrl,
-        };
+        return data;
       } catch (err) {
         errorHandling(err);
       }
@@ -220,14 +206,7 @@ export const userResolver = {
       try {
         const { access_token } = context;
 
-        const { data } = await axios<{ access_token: string }>({
-          method: "POST",
-          url: `${userUrl}/auth/google-login`,
-          headers: {
-            Origin: process.env.ORIGIN,
-            google_token: access_token,
-          },
-        });
+        const data = await UserApi.googleLogin(access_token as string);
 
         return data;
       } catch (err) {
