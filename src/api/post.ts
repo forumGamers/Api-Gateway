@@ -52,13 +52,49 @@ class PostApi extends BaseRequest {
     access_token: string | undefined;
     id: string;
   }): Promise<message> {
-    const { data } = await this.baseMutate<message>({
+    const { data, status } = await this.baseMutate<message>({
       url: `/like/${id}`,
       method: "DELETE",
       headers: {
         access_token,
       },
     });
+
+    if (status !== 201)
+      throw {
+        message: data.message,
+      };
+
+    return data;
+  }
+
+  public async postAComment({
+    access_token,
+    text,
+    postId,
+  }: {
+    access_token: string | undefined;
+    text: string;
+    postId: string;
+  }) {
+    const { data, status } = await this.baseMutate<
+      { id: string; message: string } | message
+    >({
+      url: `/comment/${postId}`,
+      method: "POST",
+      headers: {
+        access_token,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        text,
+      },
+    });
+
+    if (status !== 201)
+      throw {
+        message: data.message,
+      };
 
     return data;
   }

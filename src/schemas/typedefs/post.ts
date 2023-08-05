@@ -27,6 +27,11 @@ export const postTypeDefs = `#graphql
     message: String!
   }
 
+  type resultInsert {
+    message: String!
+    id: String!
+  }
+
   type userTimeLine {
     id: ID
     imageUrl: String
@@ -61,5 +66,6 @@ export const postTypeDefs = `#graphql
   type Mutation {
     likeAPost(id: String!): message!
     unLikeAPost(id: String!): message!
+    commentAPost(text: String!, postId: String!): resultInsert!
   }
 `;

@@ -69,5 +69,26 @@ export const postResolver = {
         errorHandling(err);
       }
     },
+    commentAPost: async (
+      _: never,
+      args: { text: string; postId: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { text, postId } = args;
+
+        const { access_token } = context;
+
+        const data = await PostApi.postAComment({
+          access_token,
+          text,
+          postId,
+        });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };
