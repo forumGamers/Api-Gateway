@@ -46,6 +46,7 @@ export const postTypeDefs = `#graphql
     commentId: String
     CreatedAt: String
     UpdatedAt: String
+    User: userTimeLine
   }
 
   type comment {
@@ -56,6 +57,7 @@ export const postTypeDefs = `#graphql
     CreatedAt: String
     UpdatedAt: String
     Reply: [reply]
+    User: userTimeLine
   }
 
   type Query {
@@ -67,5 +69,6 @@ export const postTypeDefs = `#graphql
     likeAPost(id: String!): message!
     unLikeAPost(id: String!): message!
     commentAPost(text: String!, postId: String!): resultInsert!
+    replyComment(text: String!, commentId: String!): resultInsert!
   }
 `;

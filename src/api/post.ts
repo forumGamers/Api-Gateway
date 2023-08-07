@@ -16,11 +16,17 @@ class PostApi extends BaseRequest {
   }
 
   public async getPostComment<T>(id: string): Promise<T> {
-    const { data } = await this.baseQuery<T>({
+    const { data, status } = await this.baseQuery<T | message>({
       url: `/comment/${id}`,
     });
 
-    return data;
+    if (status !== 200) {
+      const { message } = data as message;
+
+      throw { message };
+    }
+
+    return data as T;
   }
 
   public async likeAPost({

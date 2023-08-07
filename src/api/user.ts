@@ -8,12 +8,18 @@ class UserApi extends BaseRequest {
   }
 
   public async getMultipleUserById<T>(params: { id: string }): Promise<T> {
-    const { data } = await this.baseQuery<T>({
+    const { data, status } = await this.baseQuery<T | message>({
       url: "/users/multiple",
       params,
     });
 
-    return data;
+    if (status !== 200) {
+      const { message } = data as message;
+
+      throw { message };
+    }
+
+    return data as T;
   }
 
   public async loginHandler({

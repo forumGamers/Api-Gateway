@@ -28,7 +28,32 @@ export const postResolver = {
       try {
         const { id } = args;
 
-        const data = await PostApi.getPostComment<comment[]>(id);
+        const post = await PostApi.getPostComment<comment[]>(id);
+        
+
+        const usersId = post
+          .map((el: comment) => {
+            const replyUserId = el.Reply.map((reply) => reply.userId);
+
+            return [el._id, ...replyUserId].join(",");
+          })
+          .join(",");
+
+        const users = await UserApi.getMultipleUserById<user[]>({
+          id: usersId,
+        });
+
+        const data = post.map((el: comment) => {
+          const reply = el.Reply.map((val) => ({
+            ...val,
+            User: users.find((user) => user.id === val.userId),
+          }));
+          return {
+            ...el,
+            User: users.find((user) => user.id === el.userId),
+            Reply: reply,
+          };
+        });
 
         return data;
       } catch (err) {
@@ -86,6 +111,19 @@ export const postResolver = {
         });
 
         return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    replyComment: async (
+      _: never,
+      args: { text: string; commentId: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { text, commentId } = args;
+
+        const { access_token } = context;
       } catch (err) {
         errorHandling(err);
       }

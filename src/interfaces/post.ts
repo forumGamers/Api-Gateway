@@ -26,7 +26,7 @@ export interface comment {
   postId: string;
   CreatedAt: Date;
   UpdatedAt: Date;
-  Reply: reply;
+  Reply: reply[];
 }
 
 export interface reply {
