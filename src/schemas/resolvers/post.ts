@@ -29,7 +29,6 @@ export const postResolver = {
         const { id } = args;
 
         const post = await PostApi.getPostComment<comment[]>(id);
-        
 
         const usersId = post
           .map((el: comment) => {
@@ -124,6 +123,14 @@ export const postResolver = {
         const { text, commentId } = args;
 
         const { access_token } = context;
+
+        const data = await PostApi.replyAComment({
+          access_token,
+          text,
+          commentId,
+        });
+
+        return data
       } catch (err) {
         errorHandling(err);
       }

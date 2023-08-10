@@ -104,6 +104,37 @@ class PostApi extends BaseRequest {
 
     return data;
   }
+
+  public async replyAComment({
+    access_token,
+    text,
+    commentId,
+  }: {
+    access_token: string | undefined;
+    text: string;
+    commentId: string;
+  }) {
+    const { data, status } = await this.baseMutate<
+      { id: string; message: string } | message
+    >({
+      url: `/reply/${commentId}`,
+      headers: {
+        access_token,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+      data: {
+        text,
+      },
+    });
+
+    if (status !== 201)
+      throw {
+        message: data.message,
+      };
+
+    return data;
+  }
 }
 
 export default new PostApi();
