@@ -12,7 +12,7 @@ export const postResolver = {
 
         const id = timeLines.map((el: timeLine) => el.userId).join(",");
 
-        const users = await UserApi.getMultipleUserById<user[]>({ id });
+        const users = await UserApi.getMultipleUserById({ id });
 
         const data = timeLines.map((timeline: timeLine) => ({
           ...timeline,
@@ -38,7 +38,7 @@ export const postResolver = {
           })
           .join(",");
 
-        const users = await UserApi.getMultipleUserById<user[]>({
+        const users = await UserApi.getMultipleUserById({
           id: usersId,
         });
 
@@ -53,6 +53,17 @@ export const postResolver = {
             Reply: reply,
           };
         });
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getPostById: async (_: never, args: { id: string }) => {
+      try {
+        const { id } = args;
+
+        const data = await PostApi.getPostById(id);
 
         return data;
       } catch (err) {
@@ -130,7 +141,7 @@ export const postResolver = {
           commentId,
         });
 
-        return data
+        return data;
       } catch (err) {
         errorHandling(err);
       }

@@ -213,5 +213,39 @@ export const userResolver = {
         errorHandling(err);
       }
     },
+    followAUser: async (
+      _: never,
+      args: { id: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { id } = args;
+
+        const { access_token } = context;
+
+        const data = await UserApi.followAUser(id, access_token);
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    unFollowAUser: async (
+      _: never,
+      args: { id: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { id } = args;
+
+        const { access_token } = context;
+
+        const data = await UserApi.unFollowAUser(id, access_token);
+
+        return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 };

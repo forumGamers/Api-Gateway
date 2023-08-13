@@ -17,6 +17,8 @@ export interface user {
   UUID: string;
   imageUrl: string;
   username: string;
+  bio: string | null;
+  isfollowed?: boolean;
 }
 
 export interface comment {

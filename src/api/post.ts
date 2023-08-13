@@ -1,5 +1,6 @@
 import { postUrl } from "../constants";
 import { message } from "../interfaces";
+import { timeLine } from "../interfaces/post";
 import BaseRequest from "./request";
 
 class PostApi extends BaseRequest {
@@ -132,6 +133,16 @@ class PostApi extends BaseRequest {
       throw {
         message: data.message,
       };
+
+    return data;
+  }
+
+  public async getPostById(id: string) {
+    const { data, status } = await this.baseQuery<timeLine | message>({
+      url: `/post/${id}`,
+    });
+
+    if (status !== 200) throw { message: (data as message).message };
 
     return data;
   }

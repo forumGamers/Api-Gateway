@@ -37,6 +37,9 @@ export const postTypeDefs = `#graphql
     imageUrl: String
     UUID: ID
     username: String
+    bio: String
+    isfollowed: Boolean
+    backgroundImage: String
   }
 
   type reply {
@@ -63,6 +66,7 @@ export const postTypeDefs = `#graphql
   type Query {
     getTimeLine: [timeLine]
     getPostComment(id: String!): [comment]
+    getPostById(id: String!): timeLine
   }
 
   type Mutation {
