@@ -35,7 +35,7 @@ const server = new ApolloServer<BaseContext>({
           async didResolveOperation(
             requestContext: GraphQLRequestContext<GlobalContext>
           ) {
-            await parseReq(requestContext);
+            // await parseReq(requestContext);
           },
           async didEncounterErrors({ errors }) {
             errors.forEach((el) => logger.error(el.message));
@@ -49,11 +49,10 @@ const server = new ApolloServer<BaseContext>({
 
 startStandaloneServer(server, {
   listen: { port },
-  context: async ({ req, res }: StandaloneServerContextFunctionArgument) => {
-    return {
-      access_token: req.headers?.access_token,
-    };
-  },
+  context: async ({ req }: StandaloneServerContextFunctionArgument) => ({
+    access_token: req.headers?.access_token,
+    verify: req.headers.v ?? true,
+  }),
 })
   .then(({ url }: { url: string }) => {
     logger.info(`🚀  Server ready at: ${url}`);

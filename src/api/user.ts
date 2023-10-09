@@ -1,26 +1,11 @@
-import { userUrl } from "../constants";
+import { userReadURL } from "../constants";
 import { message } from "../interfaces";
 import { user } from "../interfaces/post";
 import BaseRequest from "./request";
 
 class UserApi extends BaseRequest {
   constructor() {
-    super(userUrl);
-  }
-
-  public async getMultipleUserById<T>(params: { id: string }): Promise<user[]> {
-    const { data, status } = await this.baseQuery<user[] | message>({
-      url: "/users/multiple",
-      params,
-    });
-
-    if (status !== 200) {
-      const { message } = data as message;
-
-      throw { message };
-    }
-
-    return data as user[];
+    super(userReadURL);
   }
 
   public async loginHandler({

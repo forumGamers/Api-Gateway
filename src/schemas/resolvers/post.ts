@@ -1,7 +1,7 @@
 import errorHandling from "../../middlewares/errorHandler";
 import { comment, timeLine, user } from "../../interfaces/post";
 import { GlobalContext } from "../../interfaces";
-import UserApi from "../../api/user";
+import userRead from "../../api/read/user";
 import PostApi from "../../api/post";
 
 export const postResolver = {
@@ -10,9 +10,9 @@ export const postResolver = {
       try {
         const timeLines = await PostApi.getPublicContent<timeLine[]>();
 
-        const id = timeLines.map((el: timeLine) => el.userId).join(",");
+        const ids = timeLines.map((el: timeLine) => el.userId).join(",");
 
-        const users = await UserApi.getMultipleUserById({ id });
+        const users = await userRead.getMultipleUserById({ ids });
 
         const data = timeLines.map((timeline: timeLine) => ({
           ...timeline,
@@ -38,8 +38,8 @@ export const postResolver = {
           })
           .join(",");
 
-        const users = await UserApi.getMultipleUserById({
-          id: usersId,
+        const users = await userRead.getMultipleUserById({
+          ids: usersId,
         });
 
         const data = post.map((el: comment) => {

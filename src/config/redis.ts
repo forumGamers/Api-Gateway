@@ -4,7 +4,7 @@ config();
 
 const redis = new Redis({
   host: process.env.REDIS_HOST as string,
-  port: 11677,
+  port: 11173,
   username: process.env.REDIS_USERNAME as string,
   password: process.env.REDIS_PASS as string,
 });

@@ -6,10 +6,11 @@ import {
 import { GlobalContext } from "../../interfaces";
 import errorHandling from "../../middlewares/errorHandler";
 import axios from "axios";
-import { userUrl, eventUrl, storeUrl } from "../../constants";
+import { userReadURL, eventUrl, storeUrl } from "../../constants";
 import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
 import UserApi from "../../api/user";
+import userRead from "../../api/read/user";
 
 export const userResolver = {
   Query: {
@@ -22,7 +23,7 @@ export const userResolver = {
 
         const { data, status } = await axios({
           method: "GET",
-          url: `${userUrl}/users/myData`,
+          url: `${userReadURL}/users/myData`,
           headers: {
             Origin: process.env.ORIGIN,
             access_token: context?.access_token,
@@ -51,6 +52,31 @@ export const userResolver = {
         errorHandling(err);
       }
     },
+    getUserById: async (
+      _: never,
+      args: { ids: string },
+      context: GlobalContext
+    ) => {
+      try {
+        const { ids } = args;
+        const { access_token } = context;
+
+        const cache = await redis.get(`user:${ids.split(",")[0]}`);
+        if (cache) return JSON.parse(cache);
+
+        const [user] = await userRead.getMultipleUserById(
+          { ids },
+          access_token
+        );
+        console.log({ user });
+        if (!user) throw { message: "Data not found" };
+        redis.set(`user:${ids}`, JSON.stringify(user));
+
+        return user;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
   },
 
   Mutation: {
@@ -60,7 +86,7 @@ export const userResolver = {
 
         const { data: userResponse, status } = await axios({
           method: "POST",
-          url: `${userUrl}/auth/register`,
+          url: `${userReadURL}/auth/register`,
           data: register,
           headers: {
             Origin: process.env.ORIGIN,
@@ -130,7 +156,7 @@ export const userResolver = {
 
         const { data, status } = await axios({
           method: "PATCH",
-          url: `${userUrl}/users/verify?token=${token.token}`,
+          url: `${userReadURL}/users/verify?token=${token.token}`,
           headers: {
             Origin: process.env.ORIGIN,
           },
@@ -151,7 +177,7 @@ export const userResolver = {
 
         const { data: token } = await axios({
           method: "POST",
-          url: `${userUrl}/auth/reset-password`,
+          url: `${userReadURL}/auth/reset-password`,
           data: {
             email,
           },
@@ -189,7 +215,7 @@ export const userResolver = {
 
         const { data } = await axios({
           method: "PATCH",
-          url: `${userUrl}/auth/change-forget-pass`,
+          url: `${userReadURL}/auth/change-forget-pass`,
           data: payload,
           headers: {
             access_token: context.access_token,

@@ -1,7 +1,7 @@
 import { GlobalContext } from "../../interfaces";
 import errorHandling from "../../middlewares/errorHandler";
 import axios from "axios";
-import { storeUrl, userUrl } from "../../constants";
+import { storeUrl, userReadURL } from "../../constants";
 import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
 
@@ -27,7 +27,7 @@ export const storeResolver = {
 
         const { data: follower } = await axios({
           method: "GET",
-          url: `${userUrl}/following-store/count/${data.ID}`,
+          url: `${userReadURL}/following-store/count/${data.ID}`,
           headers: {
             access_token,
             Origin: process.env.ORIGIN,
@@ -62,7 +62,7 @@ export const storeResolver = {
 
         const { data: follower } = await axios({
           method: "GET",
-          url: `${userUrl}/following-store/count/${data.ID}`,
+          url: `${userReadURL}/following-store/count/${data.ID}`,
           headers: {
             Origin: process.env.ORIGIN,
           },

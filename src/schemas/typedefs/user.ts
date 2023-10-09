@@ -52,6 +52,27 @@ export const userTypeDefs = `#graphql
     Store: store
   }
 
+  type userProfile {
+    id: ID
+    fullname: String
+    username: String
+    email: String
+    is_verified: Boolean
+    bio: String
+    image_url: String
+    image_id: String
+    background_url: String
+    background_id: String
+    status: String
+    created_at: String
+    updated_at: String
+    division: String
+    role: String
+    following: [String]
+    followers: [String]
+    token_as: String
+  }
+
   input registerInput {
     fullName: String!
     username: String!
@@ -76,6 +97,7 @@ export const userTypeDefs = `#graphql
 
   type Query {
     getUserData: user
+    getUserById(ids: String!): userProfile!
   }
 
   type Mutation {
