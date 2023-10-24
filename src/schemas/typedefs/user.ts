@@ -98,6 +98,7 @@ export const userTypeDefs = `#graphql
   type Query {
     getUserData: user
     getUserById(ids: String!): userProfile!
+    getUserByToken: userProfile!
   }
 
   type Mutation {

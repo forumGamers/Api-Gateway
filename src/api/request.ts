@@ -1,6 +1,14 @@
 import Axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Mutate, Query } from "../interfaces/request";
 
+export type BaseResponse<T = any> = {
+  data?: T;
+  message?: string;
+  code: number;
+  "Content-Type": string;
+  Path: string;
+};
+
 class BaseRequest {
   protected axios: AxiosInstance;
 
@@ -10,7 +18,7 @@ class BaseRequest {
       headers: {
         Origin: process.env.ORIGIN,
       },
-      validateStatus: () => true,
+      // validateStatus: () => true,
     });
   }
 

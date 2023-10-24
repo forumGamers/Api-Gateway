@@ -37,14 +37,10 @@ const server = new ApolloServer<BaseContext>({
           ) {
             // await parseReq(requestContext);
           },
-          async didEncounterErrors({ errors }) {
-            errors.forEach((el) => logger.error(el.message));
-          },
         };
       },
     },
   ],
-  status400ForVariableCoercionErrors: true,
 });
 
 startStandaloneServer(server, {

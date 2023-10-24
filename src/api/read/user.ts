@@ -2,6 +2,7 @@ import { userReadURL } from "../../constants";
 import BaseRequest from "../request";
 import { message } from "../../interfaces";
 import { user } from "../../interfaces/post";
+import { User } from "../../interfaces/user";
 
 class UserRead extends BaseRequest {
   constructor() {
@@ -27,6 +28,17 @@ class UserRead extends BaseRequest {
     }
 
     return data.data as user[];
+  }
+
+  public async getUserData(access_token: string) {
+    const { data, status } = await this.baseQuery<{ data: User } | message>({
+      url: `/api/v1/user/me`,
+      headers: {
+        access_token,
+      },
+    });
+
+    return (data as { data: User }).data;
   }
 }
 

@@ -11,6 +11,8 @@ import redis from "../../config/redis";
 import { verifyToken } from "../../utils/jwt";
 import UserApi from "../../api/user";
 import userRead from "../../api/read/user";
+import UserWrite from "../../api/write/user";
+import event from "../../api/write/event";
 
 export const userResolver = {
   Query: {
@@ -68,10 +70,25 @@ export const userResolver = {
           { ids },
           access_token
         );
-        console.log({ user });
-        if (!user) throw { message: "Data not found" };
-        redis.set(`user:${ids}`, JSON.stringify(user));
 
+        if (!user) throw { message: "Data not found" };
+        redis.set(`user:${ids.split(",")[0]}`, JSON.stringify(user));
+
+        return user;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    getUserByToken: async (_: never, args: never, context: GlobalContext) => {
+      try {
+        const { access_token } = context;
+
+        const cache = await redis.get(`user:token:${access_token}`);
+        if (cache) return JSON.parse(cache);
+
+        const user = await userRead.getUserData(access_token as string);
+
+        redis.set(`user:token:${access_token}`, JSON.stringify(user));
         return user;
       } catch (err) {
         errorHandling(err);
@@ -143,9 +160,7 @@ export const userResolver = {
             message: errorCode[0],
           };
 
-        const data = await UserApi.loginHandler({ email, password });
-
-        return data;
+        return await UserWrite.loginHandler({ email, password });
       } catch (err) {
         errorHandling(err);
       }
@@ -154,19 +169,7 @@ export const userResolver = {
       try {
         const { token } = args;
 
-        const { data, status } = await axios({
-          method: "PATCH",
-          url: `${userReadURL}/users/verify?token=${token.token}`,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
-
-        if (status !== 201) throw { message: data.message };
-
-        return {
-          message: data.message,
-        };
+        return await UserWrite.verifyUser(token.token);
       } catch (err) {
         errorHandling(err);
       }
@@ -175,25 +178,7 @@ export const userResolver = {
       try {
         const { email } = args;
 
-        const { data: token } = await axios({
-          method: "POST",
-          url: `${userReadURL}/auth/reset-password`,
-          data: {
-            email,
-          },
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
-
-        await axios({
-          method: "GET",
-          url: `${eventUrl}/user/reset-password`,
-          headers: {
-            Origin: process.env.ORIGIN,
-            access_token: token,
-          },
-        });
+        event.resetPasswordEmail(await UserWrite.resetPassword(email));
 
         return { message: "success" };
       } catch (err) {
@@ -213,17 +198,10 @@ export const userResolver = {
       try {
         const { payload } = args;
 
-        const { data } = await axios({
-          method: "PATCH",
-          url: `${userReadURL}/auth/change-forget-pass`,
-          data: payload,
-          headers: {
-            access_token: context.access_token,
-            Origin: process.env.ORIGIN,
-          },
-        });
-
-        return data;
+        return await UserWrite.changeForgetPassword(
+          payload,
+          context.access_token as string
+        );
       } catch (err) {
         errorHandling(err);
       }
@@ -232,9 +210,7 @@ export const userResolver = {
       try {
         const { access_token } = context;
 
-        const data = await UserApi.googleLogin(access_token as string);
-
-        return data;
+        return await UserWrite.googleLogin(access_token as string);
       } catch (err) {
         errorHandling(err);
       }
