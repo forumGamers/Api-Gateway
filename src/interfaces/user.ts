@@ -126,3 +126,20 @@ export interface SellerAccount extends UserAccount {
     | "Marketing";
   role: "Supervisor" | "Manager" | "Staff";
 }
+
+export interface userInstance {
+  fullname: string;
+  username: string;
+  UUID: string;
+  email: string;
+  password: string;
+  isVerified: boolean;
+  bio: string;
+  imageUrl: string;
+  imageId: string;
+  backgroundUrl: string;
+  backgroundId: string;
+  status: "active" | "nonActive";
+  createdAt: Date;
+  updatedAt: Date;
+}

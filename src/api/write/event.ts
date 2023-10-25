@@ -15,4 +15,26 @@ export default new (class Event extends BaseRequest {
 
     return data;
   }
+
+  public async registerEmail({
+    username,
+    isVerified,
+    email,
+    UUID,
+  }: {
+    username: string;
+    isVerified: boolean;
+    email: string;
+    UUID: string;
+  }) {
+    await this.baseMutate({
+      method: "POST",
+      url: `/user/register/${UUID}`,
+      data: {
+        username,
+        isVerified,
+        email,
+      },
+    });
+  }
 })();

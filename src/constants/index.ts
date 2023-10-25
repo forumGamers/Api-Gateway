@@ -3,7 +3,7 @@ export const userReadURL =
 export const userWriteURL =
   process.env.USER_URL ?? "http://localhost:3001/api/v1";
 
-export const eventUrl = process.env.EVENT_URL ?? "http://localhost:4100";
+export const eventUrl = process.env.EVENT_URL ?? "http://localhost:4100/api/v1";
 
 export const storeUrl = process.env.STORE_URL ?? "http://localhost:4000/api";
 

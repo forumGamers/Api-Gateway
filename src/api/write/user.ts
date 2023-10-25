@@ -1,6 +1,7 @@
 import { userWriteURL } from "../../constants";
 import BaseRequest, { BaseResponse } from "../request";
 import { message } from "../../interfaces";
+import { registerInput, userInstance } from "../../interfaces/user";
 
 export default new (class UserWrite extends BaseRequest {
   constructor() {
@@ -102,11 +103,25 @@ export default new (class UserWrite extends BaseRequest {
     });
 
     if (status !== 200) {
-      const { message } = data as message;
+      const { message } = data;
 
       throw { message };
     }
 
     return data;
+  }
+
+  public async register(data: registerInput) {
+    const { data: response, status } = await this.baseMutate<
+      BaseResponse<userInstance>
+    >({
+      method: "POST",
+      url: "/auth/register",
+      data,
+    });
+
+    if (status !== 201) throw { message: response.message };
+
+    return response.data as userInstance;
   }
 })();

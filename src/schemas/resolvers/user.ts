@@ -101,29 +101,7 @@ export const userResolver = {
       try {
         const { register } = args;
 
-        const { data: userResponse, status } = await axios({
-          method: "POST",
-          url: `${userReadURL}/auth/register`,
-          data: register,
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
-
-        if (status !== 201) throw { message: userResponse?.message };
-
-        await axios({
-          method: "POST",
-          url: `${eventUrl}/user/register/${userResponse.id}`,
-          data: {
-            userName: userResponse.username,
-            isVerified: userResponse.isVerified,
-            email: userResponse.email,
-          },
-          headers: {
-            Origin: process.env.ORIGIN,
-          },
-        });
+        event.registerEmail(await UserWrite.register(register));
 
         return { message: "success" };
       } catch (err) {
