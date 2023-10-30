@@ -9,6 +9,20 @@ export type BaseResponse<T = any> = {
   Path: string;
 };
 
+export type GoResponse<T = any> = {
+  data?: T;
+  message: string;
+  code: number;
+  status: string;
+};
+
+export type GoResponseWithMetadata<T = any> = GoResponse<T> & {
+  total: number;
+  page: any[];
+  limit: number;
+  relation: string;
+};
+
 class BaseRequest {
   protected axios: AxiosInstance;
 

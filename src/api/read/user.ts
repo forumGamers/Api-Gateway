@@ -12,9 +12,9 @@ class UserRead extends BaseRequest {
   public async getMultipleUserById(
     params: { ids: string },
     access_token?: string
-  ): Promise<user[]> {
-    const { data, status } = await this.baseQuery<{ data: user[] | message }>({
-      url: "/api/v1/user/multiple",
+  ): Promise<User[]> {
+    const { data, status } = await this.baseQuery<{ data: User[] | message }>({
+      url: "/user/multiple",
       params,
       headers: {
         access_token,
@@ -27,12 +27,12 @@ class UserRead extends BaseRequest {
       throw { message };
     }
 
-    return data.data as user[];
+    return data.data as User[];
   }
 
   public async getUserData(access_token: string) {
     const { data, status } = await this.baseQuery<{ data: User } | message>({
-      url: `/api/v1/user/me`,
+      url: `/user/me`,
       headers: {
         access_token,
       },

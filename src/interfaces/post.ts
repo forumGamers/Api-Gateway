@@ -1,6 +1,6 @@
 export interface timeLine {
   _id: string;
-  userId: number;
+  userId: string;
   text: string;
   imageUrl: string;
   imageId: string;
@@ -10,10 +10,11 @@ export interface timeLine {
   countLike: number;
   countComment: number;
   countShare: number;
+  searchAfter: any[];
 }
 
 export interface user {
-  id: number;
+  id: string;
   UUID: string;
   imageUrl: string;
   username: string;
@@ -23,7 +24,7 @@ export interface user {
 
 export interface comment {
   _id: string;
-  userId: number;
+  userId: string;
   text: string;
   postId: string;
   CreatedAt: Date;
@@ -33,9 +34,17 @@ export interface comment {
 
 export interface reply {
   _id: string;
-  userId: number;
+  userId: string;
   text: string;
   CommentId: string;
   CreatedAt: Date;
   UpdatedAt: Date;
+}
+
+export interface PostDataParams {
+  userIds?: string;
+  page?: string;
+  limit?: string;
+  sort?: string;
+  preference?: string;
 }

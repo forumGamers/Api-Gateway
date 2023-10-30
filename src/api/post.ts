@@ -1,11 +1,11 @@
-import { postUrl } from "../constants";
+import { postReadUrl } from "../constants";
 import { message } from "../interfaces";
 import { timeLine } from "../interfaces/post";
 import BaseRequest from "./request";
 
 class PostApi extends BaseRequest {
   constructor() {
-    super(postUrl);
+    super(postReadUrl);
   }
 
   public async getPublicContent<T>(): Promise<T> {

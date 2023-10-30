@@ -1,14 +1,32 @@
 import errorHandling from "../../middlewares/errorHandler";
-import { comment, timeLine, user } from "../../interfaces/post";
+import { comment, timeLine } from "../../interfaces/post";
 import { GlobalContext } from "../../interfaces";
 import userRead from "../../api/read/user";
 import PostApi from "../../api/post";
+import post from "../../api/read/post";
 
 export const postResolver = {
   Query: {
-    getTimeLine: async () => {
+    getTimeLine: async (
+      _: never,
+      args: {
+        query: {
+          userIds: string;
+          page: string;
+          limit: string;
+          sort: string;
+          preference: string;
+        };
+      },
+      context: GlobalContext
+    ) => {
       try {
-        const timeLines = await PostApi.getPublicContent<timeLine[]>();
+        const { access_token } = context;
+
+        const timeLines = await post.getPostData(
+          { ...args.query },
+          access_token
+        );
 
         const ids = timeLines.map((el: timeLine) => el.userId).join(",");
 
@@ -19,7 +37,17 @@ export const postResolver = {
           User: users.find((user) => user.id === timeline.userId),
         }));
 
-        return data;
+        return data.map((el) => ({
+          ...el,
+          User: {
+            ...el.User,
+            UUID: el.User?.id,
+            backgroundImage: el?.User?.background_url,
+            imageUrl: el?.User?.image_url,
+          },
+          searchAfterTimeStamp: el.searchAfter[0],
+          searchAfterId: el.searchAfter[1],
+        }));
       } catch (err) {
         errorHandling(err);
       }

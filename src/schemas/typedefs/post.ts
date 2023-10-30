@@ -1,7 +1,7 @@
 export const postTypeDefs = `#graphql
   type timeLine {
     _id: ID
-    userId: Int
+    userId: String
     text: String
     Media: media
     allowComment: Boolean
@@ -15,6 +15,16 @@ export const postTypeDefs = `#graphql
     isShared: Boolean
     tags: [String]
     privacy: String
+    searchAfterTimeStamp: Float
+    searchAfterId: String
+  }
+
+  input timeLineParams {
+    userIds: String
+    page: String
+    limit: String
+    sort: String
+    preference: String
   }
 
   type media {
@@ -64,7 +74,7 @@ export const postTypeDefs = `#graphql
   }
 
   type Query {
-    getTimeLine: [timeLine]
+    getTimeLine(query: timeLineParams): [timeLine]
     getPostComment(id: String!): [comment]
     getPostById(id: String!): timeLine
   }
