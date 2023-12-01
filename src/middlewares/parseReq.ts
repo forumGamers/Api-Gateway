@@ -19,39 +19,41 @@ export default async function parseReq(
   context: GraphQLRequestContext<GlobalContext>
 ): Promise<void> {
   try {
-    if (!context.request.variables) return;
+    if (context.contextValue.verify) {
+      if (!context.request.variables) return;
 
-    const { variables } = context.request;
+      const { variables } = context.request;
 
-    const varName = getVariableName(context);
+      const varName = getVariableName(context);
 
-    if (!varName || !variables || !variables[varName]) return;
+      if (!varName || !variables || !variables[varName]) return;
 
-    if (typeof variables[varName] === "string") {
-      context.request.variables[varName] = decrypt(variables[varName]);
-      return;
+      if (typeof variables[varName] === "string") {
+        context.request.variables[varName] = decrypt(variables[varName]);
+        return;
+      }
+
+      const decrypted: any = {};
+
+      for (const key in variables[varName]) {
+        const value = variables[varName][key];
+
+        const decryptedData = decrypt(value);
+
+        if (
+          !key.toLowerCase().includes("password") &&
+          validateChar(decryptedData)
+        )
+          throw {
+            statusCode: 400,
+            message: `${key} is not allowed contains symbol ${decryptedData}`,
+          };
+
+        decrypted[key] = decryptedData;
+      }
+
+      context.request.variables[varName] = decrypted;
     }
-
-    const decrypted: any = {};
-
-    for (const key in variables[varName]) {
-      const value = variables[varName][key];
-
-      const decryptedData = decrypt(value);
-
-      if (
-        !key.toLowerCase().includes("password") &&
-        validateChar(decryptedData)
-      )
-        throw {
-          statusCode: 400,
-          message: `${key} is not allowed contains symbol ${decryptedData}`,
-        };
-
-      decrypted[key] = decryptedData;
-    }
-
-    context.request.variables[varName] = decrypted;
   } catch (err) {
     errorHandling(err);
   }

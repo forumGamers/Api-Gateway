@@ -94,6 +94,17 @@ export const userResolver = {
         errorHandling(err);
       }
     },
+    getFollowingRecomendation: async (
+      _: never,
+      args: never,
+      context: GlobalContext
+    ) => {
+      try {
+        return await userRead.getFollowingRecomendation(context.access_token);
+      } catch (err) {
+        return [];
+      }
+    },
   },
 
   Mutation: {

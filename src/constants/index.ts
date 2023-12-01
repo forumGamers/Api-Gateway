@@ -11,3 +11,5 @@ export const tourUrl = process.env.TOUR_URL ?? "http://localhost:4200/api";
 
 export const postReadUrl =
   process.env.POST_READ_URL ?? "http://localhost:4301/api/v1";
+export const postWriteUrl =
+  process.env.POST_WRITE_URL ?? "http://localhost:4300/api/v1";

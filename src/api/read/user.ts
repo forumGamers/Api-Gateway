@@ -1,5 +1,5 @@
 import { userReadURL } from "../../constants";
-import BaseRequest from "../request";
+import BaseRequest, { BaseResponse } from "../request";
 import { message } from "../../interfaces";
 import { user } from "../../interfaces/post";
 import { User } from "../../interfaces/user";
@@ -39,6 +39,23 @@ class UserRead extends BaseRequest {
     });
 
     return (data as { data: User }).data;
+  }
+
+  public async getFollowingRecomendation(access_token: string | undefined) {
+    const { data, status } = await this.baseQuery<BaseResponse<User>>({
+      url: "/user/following-recomendation",
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) {
+      const { message } = data;
+
+      throw { message };
+    }
+
+    return data.data as User;
   }
 }
 

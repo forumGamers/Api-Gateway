@@ -27,6 +27,11 @@ export const postTypeDefs = `#graphql
     preference: String
   }
 
+  input Params {
+    page: String
+    limit: String
+  }
+
   type media {
     url: String
     id: String
@@ -54,7 +59,7 @@ export const postTypeDefs = `#graphql
 
   type reply {
     _id: ID
-    userId: Int
+    userId: String
     text: String
     commentId: String
     CreatedAt: String
@@ -64,19 +69,22 @@ export const postTypeDefs = `#graphql
 
   type comment {
     _id: ID
-    userId: Int
+    userId: String
     text: String
     postId: String
     CreatedAt: String
     UpdatedAt: String
     Reply: [reply]
     User: userTimeLine
+    searchAfterTimeStamp: Float
+    searchAfterId: String
   }
 
   type Query {
     getTimeLine(query: timeLineParams): [timeLine]
-    getPostComment(id: String!): [comment]
+    getPostComment(id: String!, param: Params): [comment]
     getPostById(id: String!): timeLine
+    getMyPost(query: timeLineParams): [timeLine]
   }
 
   type Mutation {

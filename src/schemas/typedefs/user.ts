@@ -99,6 +99,7 @@ export const userTypeDefs = `#graphql
     getUserData: user
     getUserById(ids: String!): userProfile!
     getUserByToken: userProfile!
+    getFollowingRecomendation: [userProfile]
   }
 
   type Mutation {

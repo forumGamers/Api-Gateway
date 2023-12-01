@@ -29,7 +29,8 @@ export interface comment {
   postId: string;
   CreatedAt: Date;
   UpdatedAt: Date;
-  Reply: reply[];
+  reply: reply[];
+  searchAfter: any[];
 }
 
 export interface reply {

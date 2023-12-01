@@ -18,7 +18,7 @@ class PostApi extends BaseRequest {
 
   public async getPostComment<T>(id: string): Promise<T> {
     const { data, status } = await this.baseQuery<T | message>({
-      url: `/comment/${id}`,
+      url: `/comments/${id}`,
     });
 
     if (status !== 200) {
