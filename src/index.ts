@@ -28,9 +28,10 @@ const server = new ApolloServer<BaseContext>({
         context: GraphQLRequestContext<GlobalContext>
       ): Promise<GraphQLRequestListener<GlobalContext> | void> {
         const { request } = context;
-        logger.info(
-          `request : ${request.http?.method}:${request.operationName}`
-        );
+        if (request.operationName !== "IntrospectionQuery")
+          logger.info(
+            `request : ${request.http?.method}:${request.operationName}`
+          );
         return {
           async didResolveOperation(
             requestContext: GraphQLRequestContext<GlobalContext>

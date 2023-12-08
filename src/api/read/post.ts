@@ -27,7 +27,39 @@ export default new (class PostRead extends BaseRequest {
     const { data, status } = await this.baseQuery<
       GoResponseWithMetadata<timeLine[]>
     >({
-      url: `/post`,
+      url: `/post/me`,
+      params,
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.data as timeLine[];
+  }
+
+  public async getMedia(params: PostDataParams, access_token?: string) {
+    const { data, status } = await this.baseQuery<
+      GoResponseWithMetadata<timeLine[]>
+    >({
+      url: `/post/media`,
+      params,
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.data as timeLine[];
+  }
+
+  public async getLikedPost(params: PostDataParams, access_token?: string) {
+    const { data, status } = await this.baseQuery<
+      GoResponseWithMetadata<timeLine[]>
+    >({
+      url: `/post/liked`,
       params,
       headers: {
         access_token,

@@ -6,9 +6,9 @@ import {
 import { GlobalContext } from "../../interfaces";
 import errorHandling from "../../middlewares/errorHandler";
 import axios from "axios";
-import { userReadURL, eventUrl, storeUrl } from "../../constants";
+import { userReadURL, storeUrl } from "../../constants";
 import redis from "../../config/redis";
-import { verifyToken } from "../../utils/jwt";
+import jwt from "../../utils/jwt";
 import UserApi from "../../api/user";
 import userRead from "../../api/read/user";
 import UserWrite from "../../api/write/user";
@@ -18,7 +18,7 @@ export const userResolver = {
   Query: {
     getUserData: async (_: never, args: never, context: GlobalContext) => {
       try {
-        const id = verifyToken(context.access_token).id;
+        const id = jwt.decodeToken(context.access_token || "").UUID;
         const cache = await redis.get(`user:${id}`);
 
         if (cache) return JSON.parse(cache);

@@ -1,19 +1,36 @@
-import { JwtPayload, Secret, verify, sign } from "jsonwebtoken";
-const SECRET = process.env.SECRET as Secret;
-const API_ACCESS = process.env.API_ACCESS as Secret;
+import {
+  JwtPayload,
+  Secret,
+  sign,
+  SignOptions,
+  verify,
+  decode,
+} from "jsonwebtoken";
 
-export const createToken = (payload: object): string =>
-  sign(payload, SECRET, { algorithm: "HS256" });
+export interface jwtValue extends JwtPayload {
+  UUID: string;
+  loggedAs: "User" | "Admin" | "Seller";
+}
 
-export const verifyToken = (token: string | any): JwtPayload =>
-  verify(token, SECRET, { algorithms: ["HS256"] }) as JwtPayload;
+export default new (class JWT {
+  private secret: Secret;
 
-export const API_Access_Token = (): string =>
-  sign(
-    {
-      Origin: process.env.ORIGIN,
-      time: new Date().toString(),
-    },
-    API_ACCESS,
-    { algorithm: "HS256", expiresIn: "1m" }
-  );
+  constructor() {
+    this.secret = process.env.SECRET as Secret;
+  }
+
+  public createToken(
+    data: { UUID: string; loggedAs: "User" | "Admin" | "Seller" },
+    options?: SignOptions
+  ) {
+    return sign({ ...data }, this.secret, options);
+  }
+
+  public verifyToken(token: string) {
+    return verify(token, this.secret) as jwtValue;
+  }
+
+  public decodeToken(token: string) {
+    return decode(token) as jwtValue;
+  }
+})();

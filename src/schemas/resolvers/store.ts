@@ -3,14 +3,14 @@ import errorHandling from "../../middlewares/errorHandler";
 import axios from "axios";
 import { storeUrl, userReadURL } from "../../constants";
 import redis from "../../config/redis";
-import { verifyToken } from "../../utils/jwt";
+import jwt from "../../utils/jwt";
 
 export const storeResolver = {
   Query: {
     getUserStore: async (_: never, args: never, context: GlobalContext) => {
       try {
         const { access_token } = context;
-        const id = verifyToken(access_token).id;
+        const id = jwt.decodeToken(access_token || "").UUID;
 
         const cache = await redis.get(`user:store:${id}`);
 

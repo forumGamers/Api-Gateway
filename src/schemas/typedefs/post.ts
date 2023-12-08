@@ -3,28 +3,24 @@ export const postTypeDefs = `#graphql
     _id: ID
     userId: String
     text: String
-    Media: media
+    media: media
     allowComment: Boolean
-    CreatedAt: String
-    UpdatedAt: String
-    CountLike: Int
-    CountComment: Int
-    CountShare: Int
+    createdAt: String
+    updatedAt: String
+    countLike: Int
+    countComment: Int
+    countShare: Int
     User: userTimeLine
     isLiked: Boolean
     isShared: Boolean
     tags: [String]
     privacy: String
-    searchAfterTimeStamp: Float
-    searchAfterId: String
   }
 
   input timeLineParams {
     userIds: String
     page: String
     limit: String
-    sort: String
-    preference: String
   }
 
   input Params {
@@ -76,8 +72,6 @@ export const postTypeDefs = `#graphql
     UpdatedAt: String
     Reply: [reply]
     User: userTimeLine
-    searchAfterTimeStamp: Float
-    searchAfterId: String
   }
 
   type Query {
@@ -85,6 +79,8 @@ export const postTypeDefs = `#graphql
     getPostComment(id: String!, param: Params): [comment]
     getPostById(id: String!): timeLine
     getMyPost(query: timeLineParams): [timeLine]
+    getMedia(query: timeLineParams): [timeLine]
+    getMyLikedPost(query: timeLineParams): [timeLine]
   }
 
   type Mutation {

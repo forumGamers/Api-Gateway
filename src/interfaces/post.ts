@@ -10,7 +10,6 @@ export interface timeLine {
   countLike: number;
   countComment: number;
   countShare: number;
-  searchAfter: any[];
 }
 
 export interface user {
@@ -30,7 +29,6 @@ export interface comment {
   CreatedAt: Date;
   UpdatedAt: Date;
   reply: reply[];
-  searchAfter: any[];
 }
 
 export interface reply {
@@ -46,6 +44,4 @@ export interface PostDataParams {
   userIds?: string;
   page?: string;
   limit?: string;
-  sort?: string;
-  preference?: string;
 }
