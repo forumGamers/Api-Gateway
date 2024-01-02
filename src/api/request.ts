@@ -32,11 +32,11 @@ class BaseRequest {
       headers: {
         Origin: process.env.ORIGIN,
       },
-      // validateStatus: () => true,
+      validateStatus: () => true,
     });
   }
 
-  protected async baseQuery<T>({
+  protected async baseQuery<T = any>({
     url,
     headers,
     params,
@@ -57,7 +57,7 @@ class BaseRequest {
     });
   }
 
-  protected async baseMutate<T>({
+  protected async baseMutate<T = any>({
     url,
     headers,
     data,

@@ -1,7 +1,8 @@
-import {
+import type {
   registerInput,
   loginInput,
   tokenVerification,
+  UpdateProfileProps,
 } from "../../interfaces/user";
 import { GlobalContext } from "../../interfaces";
 import errorHandling from "../../middlewares/errorHandler";
@@ -13,6 +14,7 @@ import UserApi from "../../api/user";
 import userRead from "../../api/read/user";
 import UserWrite from "../../api/write/user";
 import event from "../../api/write/event";
+import { base64ToBlob } from "../../utils/global";
 
 export const userResolver = {
   Query: {
@@ -56,27 +58,24 @@ export const userResolver = {
     },
     getUserById: async (
       _: never,
-      args: { ids: string },
+      args: { userId: string },
       context: GlobalContext
     ) => {
       try {
-        const { ids } = args;
+        const { userId } = args;
         const { access_token } = context;
 
-        const cache = await redis.get(`user:${ids.split(",")[0]}`);
+        const cache = await redis.get(`user:${userId}`);
         if (cache) return JSON.parse(cache);
 
-        const [user] = await userRead.getMultipleUserById(
-          { ids },
-          access_token
-        );
-
+        const user = await userRead.getUserById(userId, access_token);
         if (!user) throw { message: "Data not found" };
-        redis.set(`user:${ids.split(",")[0]}`, JSON.stringify(user));
+
+        redis.set(`user:${userId}`, JSON.stringify(user));
 
         return user;
       } catch (err) {
-        errorHandling(err);
+        return null;
       }
     },
     getUserByToken: async (_: never, args: never, context: GlobalContext) => {
@@ -234,6 +233,59 @@ export const userResolver = {
         const data = await UserApi.unFollowAUser(id, access_token);
 
         return data;
+      } catch (err) {
+        errorHandling(err);
+      }
+    },
+    updateProfile: async (
+      _: never,
+      {
+        data,
+      }: {
+        data: UpdateProfileProps;
+      },
+      { access_token }: GlobalContext
+    ) => {
+      try {
+        const { UUID } = jwt.decodeToken(access_token as string);
+        const handler: any[] = [];
+
+        if (data.img) {
+          const file = base64ToBlob(data.img, `profile-${UUID}`);
+          if (file) {
+            const formdata = new FormData();
+            formdata.append("image", file.file, file.filename);
+            handler.push(UserWrite.updateProfileImg(formdata, access_token));
+          }
+        }
+
+        if (data.background) {
+          const file = base64ToBlob(data.background, `background-${UUID}`);
+          if (file) {
+            const formdata = new FormData();
+            formdata.append("image", file.file, file.filename);
+            handler.push(UserWrite.updateBackgroundImg(formdata, access_token));
+          }
+        }
+
+        if (data.username || data.bio) {
+          handler.push(
+            UserWrite.updateUserInfo(
+              { username: data.username, bio: data.bio },
+              access_token
+            )
+          );
+        }
+
+        if (handler.length) {
+          await Promise.all(handler);
+          const id = jwt.decodeToken(access_token || "").UUID;
+          redis.del(`user:${id}`);
+        }
+
+        return {
+          message: "ok",
+        };
       } catch (err) {
         errorHandling(err);
       }

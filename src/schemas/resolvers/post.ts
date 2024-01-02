@@ -104,12 +104,15 @@ export const postResolver = {
     ) => {
       try {
         const { access_token } = ctx;
+        const {
+          query: { page, limit },
+        } = args;
 
         const id = jwt.decodeToken(access_token || "").UUID;
-        const cache = await redis.get(`user-post-me:${id}`);
+        const cache = await redis.get(`user-post-me-${page || 1}:${id}`);
         if (cache) return JSON.parse(cache);
 
-        const timeLines = await post.getMyPost({ ...args.query }, access_token);
+        const timeLines = await post.getMyPost({ page, limit }, access_token);
 
         const ids = timeLines.map((el: timeLine) => el.userId).join(",");
 
@@ -130,7 +133,10 @@ export const postResolver = {
           },
         }));
 
-        redis.set(`user-post-me:${id}`, JSON.stringify(result));
+        redis.set(`user-post-me-${page || 1}:${id}`, JSON.stringify(result));
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-${nPage - 1}:${id}`);
 
         return result;
       } catch (err) {
@@ -146,12 +152,15 @@ export const postResolver = {
     ) => {
       try {
         const { access_token } = ctx;
+        const {
+          query: { page, limit },
+        } = args;
 
         const id = jwt.decodeToken(access_token || "").UUID;
-        const cache = await redis.get(`user-post-me-media:${id}`);
+        const cache = await redis.get(`user-post-me-media-${page || 1}:${id}`);
         if (cache) return JSON.parse(cache);
 
-        const timeLines = await post.getMedia({ ...args.query }, access_token);
+        const timeLines = await post.getMedia({ page, limit }, access_token);
 
         const ids = timeLines.map((el: timeLine) => el.userId).join(",");
 
@@ -172,7 +181,14 @@ export const postResolver = {
           },
         }));
 
-        redis.set(`user-post-me-media:${id}`, JSON.stringify(result));
+        redis.set(
+          `user-post-me-media-${page || 1}:${id}`,
+          JSON.stringify(result)
+        );
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-media-${nPage - 1}:${id}`);
+
         return result;
       } catch (err) {
         return [];
@@ -187,12 +203,15 @@ export const postResolver = {
     ) => {
       try {
         const { access_token } = ctx;
+        const {
+          query: { page, limit },
+        } = args;
 
         const id = jwt.decodeToken(access_token || "").UUID;
-        const cache = await redis.get(`user-post-me-liked:${id}`);
+        const cache = await redis.get(`user-post-me-liked-${page || 1}:${id}`);
         if (cache) return JSON.parse(cache);
 
-        const timeLines = await post.getMedia({ ...args.query }, access_token);
+        const timeLines = await post.getMedia({ page, limit }, access_token);
 
         const ids = timeLines.map((el: timeLine) => el.userId).join(",");
 
@@ -212,6 +231,179 @@ export const postResolver = {
             imageUrl: el?.User?.image_url,
           },
         }));
+
+        redis.set(
+          `user-post-me-liked-${page || 1}:${id}`,
+          JSON.stringify(result)
+        );
+
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-liked-${nPage - 1}:${id}`);
+        return result;
+      } catch (err) {
+        return [];
+      }
+    },
+    getUserPost: async (
+      _: never,
+      args: { userId: string; param: { page: string; limit: string } },
+      ctx: GlobalContext
+    ) => {
+      try {
+        const {
+          userId,
+          param: { page, limit },
+        } = args;
+        const { access_token } = ctx;
+
+        const cache = await redis.get(`user-post-me-${page || 1}:${userId}`);
+        if (cache) return JSON.parse(cache);
+
+        const timeLines = await post.getUserPostByUserId(
+          userId,
+          { page, limit },
+          access_token
+        );
+
+        const ids = timeLines.map((el: timeLine) => el.userId).join(",");
+
+        const users = await userRead.getMultipleUserById({ ids });
+
+        const data = timeLines.map((timeline: timeLine) => ({
+          ...timeline,
+          User: users.find((user) => user.id === timeline.userId),
+        }));
+
+        const result = data.map((el) => ({
+          ...el,
+          User: {
+            ...el.User,
+            UUID: el.User?.id,
+            backgroundImage: el?.User?.background_url,
+            imageUrl: el?.User?.image_url,
+          },
+        }));
+
+        redis.set(
+          `user-post-me-${page || 1}:${userId}`,
+          JSON.stringify(result)
+        );
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-${nPage - 1}:${userId}`);
+
+        return result;
+      } catch (err) {
+        console.log(err);
+        return [];
+      }
+    },
+    getUserMedia: async (
+      _: never,
+      args: { userId: string; param: { page: string; limit: string } },
+      ctx: GlobalContext
+    ) => {
+      try {
+        const {
+          userId,
+          param: { page = "1", limit = "20" },
+        } = args;
+        const { access_token } = ctx;
+        const cache = await redis.get(
+          `user-post-me-media-${page || 1}:${userId}`
+        );
+        if (cache) return JSON.parse(cache);
+
+        const timeLines = await post.getUserMediaByUserId(
+          userId,
+          { page, limit },
+          access_token
+        );
+
+        const ids = timeLines.map((el: timeLine) => el.userId).join(",");
+
+        const users = await userRead.getMultipleUserById({ ids });
+
+        const data = timeLines.map((timeline: timeLine) => ({
+          ...timeline,
+          User: users.find((user) => user.id === timeline.userId),
+        }));
+
+        const result = data.map((el) => ({
+          ...el,
+          User: {
+            ...el.User,
+            UUID: el.User?.id,
+            backgroundImage: el?.User?.background_url,
+            imageUrl: el?.User?.image_url,
+          },
+        }));
+
+        redis.set(
+          `user-post-me-media-${page || 1}:${userId}`,
+          JSON.stringify(result)
+        );
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-media-${nPage - 1}:${userId}`);
+
+        return result;
+      } catch (err) {
+        return [];
+      }
+    },
+    getUserLikedPost: async (
+      _: never,
+      args: { userId: string; param: { page: string; limit: string } },
+      ctx: GlobalContext
+    ) => {
+      try {
+        const {
+          userId,
+          param: { page, limit },
+        } = args;
+        const { access_token } = ctx;
+
+        const cache = await redis.get(
+          `user-post-me-liked-${page || 1}:${userId}`
+        );
+        if (cache) return JSON.parse(cache);
+
+        const timeLines = await post.getUserMediaByUserId(
+          userId,
+          { page, limit },
+          access_token
+        );
+
+        const ids = timeLines.map((el: timeLine) => el.userId).join(",");
+
+        const users = await userRead.getMultipleUserById({ ids });
+
+        const data = timeLines.map((timeline: timeLine) => ({
+          ...timeline,
+          User: users.find((user) => user.id === timeline.userId),
+        }));
+
+        const result = data.map((el) => ({
+          ...el,
+          User: {
+            ...el.User,
+            UUID: el.User?.id,
+            backgroundImage: el?.User?.background_url,
+            imageUrl: el?.User?.image_url,
+          },
+        }));
+
+        redis.set(
+          `user-post-me-liked-${page || 1}:${userId}`,
+          JSON.stringify(result)
+        );
+
+        const nPage = Number(page);
+        if (page && nPage && nPage > 1)
+          redis.del(`user-post-me-liked-${nPage - 1}:${userId}`);
+
         return result;
       } catch (err) {
         return [];

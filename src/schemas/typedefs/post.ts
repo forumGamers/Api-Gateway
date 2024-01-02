@@ -81,6 +81,9 @@ export const postTypeDefs = `#graphql
     getMyPost(query: timeLineParams): [timeLine]
     getMedia(query: timeLineParams): [timeLine]
     getMyLikedPost(query: timeLineParams): [timeLine]
+    getUserPost(userId: String!, param: Params): [timeLine]
+    getUserMedia(userId: String!, param: Params): [timeLine]
+    getUserLikedPost(userId: String!, param: Params): [timeLine]
   }
 
   type Mutation {

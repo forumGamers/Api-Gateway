@@ -124,4 +124,50 @@ export default new (class UserWrite extends BaseRequest {
 
     return response.data as userInstance;
   }
+
+  public async updateProfileImg(formData: FormData, access_token?: string) {
+    const { data } = await this.baseMutate<BaseResponse>({
+      url: "/user/profile-img",
+      method: "POST",
+      headers: {
+        access_token,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    });
+
+    return data.message;
+  }
+
+  public async updateBackgroundImg(formData: FormData, access_token?: string) {
+    const { data } = await this.baseMutate<BaseResponse>({
+      url: "/user/background-img",
+      method: "POST",
+      headers: {
+        access_token,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    });
+
+    return data.message;
+  }
+
+  public async updateUserInfo(
+    payload: { username?: string; bio?: string },
+    access_token?: string
+  ) {
+    const { data, status } = await this.baseMutate<BaseResponse>({
+      method: "PATCH",
+      url: "/user/info",
+      headers: {
+        access_token,
+      },
+      data: payload,
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.message;
+  }
 })();

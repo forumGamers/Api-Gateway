@@ -39,6 +39,26 @@ export default new (class PostRead extends BaseRequest {
     return data.data as timeLine[];
   }
 
+  public async getUserPostByUserId(
+    userId: string,
+    params: PostDataParams,
+    access_token?: string
+  ) {
+    const { data, status } = await this.baseQuery<
+      GoResponseWithMetadata<timeLine[]>
+    >({
+      url: `/post/me/${userId}`,
+      params,
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.data as timeLine[];
+  }
+
   public async getMedia(params: PostDataParams, access_token?: string) {
     const { data, status } = await this.baseQuery<
       GoResponseWithMetadata<timeLine[]>
@@ -55,11 +75,51 @@ export default new (class PostRead extends BaseRequest {
     return data.data as timeLine[];
   }
 
+  public async getUserMediaByUserId(
+    userId: string,
+    params: PostDataParams,
+    access_token?: string
+  ) {
+    const { data, status } = await this.baseQuery<
+      GoResponseWithMetadata<timeLine[]>
+    >({
+      url: `/post/media/${userId}`,
+      params,
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.data as timeLine[];
+  }
+
   public async getLikedPost(params: PostDataParams, access_token?: string) {
     const { data, status } = await this.baseQuery<
       GoResponseWithMetadata<timeLine[]>
     >({
       url: `/post/liked`,
+      params,
+      headers: {
+        access_token,
+      },
+    });
+
+    if (status !== 200) throw { message: data.message };
+
+    return data.data as timeLine[];
+  }
+
+  public async getUserLikedPostByUserId(
+    userId: string,
+    params: PostDataParams,
+    access_token?: string
+  ) {
+    const { data, status } = await this.baseQuery<
+      GoResponseWithMetadata<timeLine[]>
+    >({
+      url: `/post/liked/${userId}`,
       params,
       headers: {
         access_token,

@@ -143,3 +143,10 @@ export interface userInstance {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface UpdateProfileProps {
+  img?: string;
+  background?: string;
+  username?: string;
+  bio?: string;
+}

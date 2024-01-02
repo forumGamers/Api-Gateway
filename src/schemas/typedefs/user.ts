@@ -95,10 +95,17 @@ export const userTypeDefs = `#graphql
     confirmPassword: String!
   }
 
+  input updateProfile {
+    img: String
+    background: String
+    username: String
+    bio: String
+  }
+
   type Query {
     getUserData: user
-    getUserById(ids: String!): userProfile!
-    getUserByToken: userProfile!
+    getUserById(userId: String!): userProfile
+    getUserByToken: userProfile
     getFollowingRecomendation: [userProfile]
   }
 
@@ -111,5 +118,6 @@ export const userTypeDefs = `#graphql
     googleLogin: access_token!
     followAUser(id: String!): message
     unFollowAUser(id: String!): message
+    updateProfile(data: updateProfile!): message
   }
 `;

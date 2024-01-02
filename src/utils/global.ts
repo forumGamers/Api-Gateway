@@ -16,3 +16,19 @@ export const urlBuilder = (
 
   return path;
 };
+
+export const base64ToBlob = (
+  base64: string,
+  filename: string
+): { file: Blob; filename: string; type: string } | null => {
+  const match = base64.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
+  if (!match) return null;
+
+  const [, type, imgStr] = match;
+
+  return {
+    file: new Blob([Buffer.from(imgStr, "base64")], { type }),
+    type,
+    filename: `${filename}.${type.split("/")[1]}`,
+  };
+};
